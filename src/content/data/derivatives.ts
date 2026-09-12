@@ -1,0 +1,261 @@
+import type { Concept } from '../types'
+
+export const derivativesConcepts: Concept[] = [
+  {
+    id: 'c2-derivative',
+    chapterId: 'ch2',
+    title: '导数的概念与几何意义',
+    summary: '导数是变化率，几何上是切线斜率。可导必连续，但连续不一定可导。',
+    formulas: [
+      { id: 'd-def', name: '导数定义', latex: String.raw`f'(x_0)=\lim_{\Delta x\to0}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}` },
+      { id: 'd-tangent', name: '切线方程', latex: String.raw`y-f(x_0)=f'(x_0)(x-x_0)` },
+      { id: 'd-cont', name: '可导与连续', latex: String.raw`\text{可导}\Rightarrow\text{连续}` },
+      { id: 'd-lr', name: '左右导数', latex: String.raw`f'(x_0^{\pm})=\lim_{\Delta x\to0^{\pm}}\frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-derivative-def',
+        name: '用导数定义判断可导性',
+        summary: '分段/绝对值函数在分界点需用左右导数判断。',
+        start: 'point',
+        nodes: {
+          point: { type: 'action', id: 'point', text: '判断考查点是否在分段点 / 是否含 |x| 等', next: 'cont' },
+          cont: { type: 'test', id: 'cont', prompt: '该点函数连续吗？', yes: 'lr', no: 'not' },
+          lr: { type: 'action', id: 'lr', text: '分别算左导数与右导数', next: 'cmp' },
+          cmp: { type: 'test', id: 'cmp', prompt: '左导数 = 右导数 吗？', yes: 'ok', no: 'not' },
+          ok: { type: 'result', id: 'ok', text: '可导，f\' = 共同值' },
+          not: { type: 'result', id: 'not', text: '不可导（或先证不连续故不可导）' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-rules',
+    chapterId: 'ch2',
+    title: '求导法则与基本公式',
+    summary: '和差积商、链式法则 + 基本初等函数导数表，是最常用求导工具。',
+    formulas: [
+      { id: 'r-sum', name: '和差', latex: String.raw`(u\pm v)'=u'\pm v'` },
+      { id: 'r-product', name: '乘积', latex: String.raw`(uv)'=u'v+uv'` },
+      { id: 'r-quotient', name: '商', latex: String.raw`\left(\frac{u}{v}\right)'=\frac{u'v-uv'}{v^2}` },
+      { id: 'r-chain', name: '链式法则', latex: String.raw`\frac{dy}{dx}=\frac{dy}{du}\cdot\frac{du}{dx}` },
+      { id: 'r-sin', name: '(sin x)\'', latex: String.raw`(\sin x)'=\cos x` },
+      { id: 'r-cos', name: '(cos x)\'', latex: String.raw`(\cos x)'=-\sin x` },
+      { id: 'r-exp', name: '(eˣ)\'', latex: String.raw`(e^{x})'=e^{x}` },
+      { id: 'r-ln', name: '(ln x)\'', latex: String.raw`(\ln x)'=\frac{1}{x}` },
+      { id: 'r-ax', name: '(aˣ)\'', latex: String.raw`(a^{x})'=a^{x}\ln a` },
+      { id: 'r-tan', name: '(tan x)\'', latex: String.raw`(\tan x)'=\sec^{2}x` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-rules-composite',
+        name: '复合函数求导',
+        summary: '由外到内逐层使用链式法则求导。',
+        start: 'layer',
+        nodes: {
+          layer: { type: 'action', id: 'layer', text: '识别最外层函数与内层函数', next: 'chain' },
+          chain: { type: 'action', id: 'chain', text: '外层求导乘以内层求导，反复直到最内层', next: 'done' },
+          done: { type: 'result', id: 'done', text: '得到导数表达式' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-implicit',
+    chapterId: 'ch2',
+    title: '隐函数与参数方程求导',
+    summary: '隐函数两边对 x 求导，把 y 看成 x 的函数；对数求导法处理幂指/连乘连除。',
+    formulas: [
+      { id: 'implicit', name: '隐函数求导', latex: String.raw`F(x,y)=0\Rightarrow\text{两边对 }x\text{ 求导，}y\text{看成} y(x)` },
+      { id: 'logdiff', name: '对数求导法', latex: String.raw`\ln y=\ln f(x)\Rightarrow\frac{y'}{y}=\cdots` },
+      { id: 'param', name: '参数方程求导', latex: String.raw`\frac{dy}{dx}=\frac{dy/dt}{dx/dt}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-implicit-solve',
+        name: '隐函数求导',
+        summary: '把 y 视作 x 的函数，对等式两边同时关于 x 求导。',
+        start: 'implicit',
+        nodes: {
+          implicit: { type: 'action', id: 'implicit', text: '等式两边同时对 x 求导（记住 y 是 x 的函数）', next: 'isolate' },
+          isolate: { type: 'action', id: 'isolate', text: '整理含 y\' 的项，解出 y\'', next: 'done' },
+          done: { type: 'result', id: 'done', text: '得到 y\'（可含 x, y）' },
+        },
+      },
+      {
+        id: 'c2-implicit-feature',
+        name: '是否用对数求导法',
+        summary: '幂指函数 u(x)^v(x) 或连乘连除形，优先用对数求导法。',
+        start: 'form',
+        nodes: {
+          form: { type: 'test', id: 'form', prompt: '是 u(x)^v(x)（幂指）或连乘/连除/根式复合？', yes: 'log', no: 'normal' },
+          log: { type: 'action', id: 'log', text: '两边取对数 → 求导 → 解出 y\'', next: 'log-done' },
+          'log-done': { type: 'result', id: 'log-done', text: '用对数求导法求导完毕' },
+          normal: { type: 'action', id: 'normal', text: '用常规四则/链式法则求导', next: 'n-done' },
+          'n-done': { type: 'result', id: 'n-done', text: '求导完毕' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-higher',
+    chapterId: 'ch2',
+    title: '高阶导数',
+    summary: '二阶及以上导数，用于凹凸性、拐点。常见函数的 n 阶导数需记住。',
+    formulas: [
+      { id: 'h-sin', name: '(sin x)^(n)', latex: String.raw`(\sin x)^{(n)}=\sin\left(x+\frac{n\pi}{2}\right)` },
+      { id: 'h-cos', name: '(cos x)^(n)', latex: String.raw`(\cos x)^{(n)}=\cos\left(x+\frac{n\pi}{2}\right)` },
+      { id: 'h-exp', name: '(eˣ)^(n)', latex: String.raw`(e^{x})^{(n)}=e^{x}` },
+      { id: 'h-ln', name: '(ln x)^(n)', latex: String.raw`(\ln x)^{(n)}=(-1)^{n-1}\frac{(n-1)!}{x^{n}}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-higher-nth',
+        name: '求 n 阶导数',
+        summary: '先化简到能套「标准 n 阶导数公式」的形式。',
+        start: 'form',
+        nodes: {
+          form: { type: 'action', id: 'form', text: '化为 sin/cos/eˣ/ln/xⁿ 等标准形式', next: 'nth' },
+          nth: { type: 'action', id: 'nth', text: '套用对应的 n 阶导数公式', next: 'done' },
+          done: { type: 'result', id: 'done', text: '得到 n 阶导数' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-differential',
+    chapterId: 'ch2',
+    title: '微分',
+    summary: 'dy = f\'(x)dx。可微与可导等价，用于局部线性化与近似计算。',
+    formulas: [
+      { id: 'diff', name: '微分', latex: String.raw`dy=f'(x)dx` },
+      { id: 'diff-equiv', name: '可微⇔可导', latex: String.raw`\text{可微}\Leftrightarrow\text{可导}` },
+      { id: 'diff-approx', name: '近似计算', latex: String.raw`f(x_0+\Delta x)\approx f(x_0)+f'(x_0)\Delta x` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-differential-approx',
+        name: '用微分做近似计算',
+        summary: '选一个好算的起点，用 f 在起点的一阶泰勒近似。',
+        start: 'x0',
+        nodes: {
+          x0: { type: 'action', id: 'x0', text: '选一个点 x₀，使 f(x₀) 与 f\'(x₀) 好算', next: 'incr' },
+          incr: { type: 'action', id: 'incr', text: '令 Δx = 目标值 - x₀，代入 f≈f(x₀)+f\'(x₀)Δx', next: 'done' },
+          done: { type: 'result', id: 'done', text: '得到近似值' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-mvt',
+    chapterId: 'ch2',
+    title: '中值定理',
+    summary: '罗尔、拉格朗日、柯西中值定理是证明等式/不等式的基础。',
+    formulas: [
+      { id: 'mvt-rolle', name: '罗尔定理', latex: String.raw`f(a)=f(b)\Rightarrow\exists\xi,\ f'(\xi)=0` },
+      { id: 'mvt-lagrange', name: '拉格朗日中值', latex: String.raw`f(b)-f(a)=f'(\xi)(b-a)` },
+      { id: 'mvt-cauchy', name: '柯西中值', latex: String.raw`\frac{f(b)-f(a)}{g(b)-g(a)}=\frac{f'(\xi)}{g'(\xi)}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-mvt-choice',
+        name: '选择中值定理',
+        summary: '根据待证等式/条件选择罗尔、拉格朗日或柯西。',
+        start: 'g',
+        nodes: {
+          g: { type: 'test', id: 'g', prompt: '结论中含两个函数的比值形式？', yes: 'cauchy', no: 'lag' },
+          cauchy: { type: 'action', id: 'cauchy', text: '构造满足柯西中值条件，用柯西定理', next: 'c-done' },
+          'c-done': { type: 'result', id: 'c-done', text: '证得比值结论' },
+          lag: { type: 'test', id: 'lag', prompt: '能否找到 f(a)=f(b) 辅助函数？', yes: 'rolle', no: 'lagrange' },
+          rolle: { type: 'action', id: 'rolle', text: '构造辅助函数 F 使 F(a)=F(b)，用罗尔定理', next: 'r-done' },
+          'r-done': { type: 'result', id: 'r-done', text: '证得存在 ξ 使 F\'(ξ)=0' },
+          lagrange: { type: 'action', id: 'lagrange', text: '直接用拉格朗日中值定理', next: 'l-done' },
+          'l-done': { type: 'result', id: 'l-done', text: '证得 f(b)-f(a)=f\'(ξ)(b-a)' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-lhopital',
+    chapterId: 'ch2',
+    title: '洛必达法则',
+    summary: '用于 0/0 与 ∞/∞ 型极限，需先判断极限类型，必要时先化到可洛必达形式。',
+    formulas: [
+      { id: 'lh-00', name: '0/0 型', latex: String.raw`\lim\frac{f}{g}=\lim\frac{f'}{g'}` },
+      { id: 'lh-inf', name: '∞/∞ 型', latex: String.raw`\lim\frac{f}{g}=\lim\frac{f'}{g'}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-lhopital-route',
+        name: '洛必达求极限（含 A→B 跳转）',
+        summary: '先判断类型；0·∞、∞-∞、1^∞ 等要先化成 0/0 或 ∞/∞ 再洛必达。',
+        start: 'type',
+        nodes: {
+          type: { type: 'test', id: 'type', prompt: '是否为 0/0 或 ∞/∞ 型？', yes: 'direct', no: 'convert' },
+          direct: { type: 'action', id: 'direct', text: '直接对分子分母分别求导再求极限', next: 'check' },
+          convert: { type: 'action', id: 'convert', text: '先变换成 0/0 或 ∞/∞（如 0·∞→/分母、∞-∞→通分、1^∞→取对数）', next: 'direct2' },
+          direct2: { type: 'action', id: 'direct2', text: '用洛必达法则求导求极限', next: 'check' },
+          check: { type: 'test', id: 'check', prompt: '洛必达后仍为未定式且满足条件？', yes: 'again', no: 'other' },
+          again: { type: 'action', id: 'again', text: '可继续洛必达（重复，注意次数与条件）', next: 'done' },
+          other: { type: 'action', id: 'other', text: '改用等价无穷小/泰勒/夹逼等其他方法', next: 'done' },
+          done: { type: 'result', id: 'done', text: '求出极限' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-monotone',
+    chapterId: 'ch2',
+    title: '单调性、极值与最值',
+    summary: '用 f\' 的符号判单调；f\'=0 或不存在处可能是极值点，用一阶/二阶充分条件确认。',
+    formulas: [
+      { id: 'mono-sign', name: '单调性判定', latex: String.raw`f'(x)>0\Rightarrow\text{递增};\ f'(x)<0\Rightarrow\text{递减}` },
+      { id: 'ext-necessary', name: '极值必要条件', latex: String.raw`x_0\text{ 极值点}\Rightarrow f'(x_0)=0\text{ 或不存在}` },
+      { id: 'ext-first', name: '第一充分条件', latex: String.raw`f' \text{ 在 }x_0\text{ 两侧变号}` },
+      { id: 'ext-second', name: '第二充分条件', latex: String.raw`f'(x_0)=0,\ f''(x_0)\ne0\Rightarrow\text{极值}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-monotone-solve',
+        name: '求单调区间与极值',
+        summary: '求导 → 求驻点/不可导点 → 用一阶符号表判断区间与极值。',
+        start: 'deriv',
+        nodes: {
+          deriv: { type: 'action', id: 'deriv', text: '求 f\'(x)', next: 'critical' },
+          critical: { type: 'action', id: 'critical', text: '令 f\'(x)=0 与找不存在点，得可疑点', next: 'sign' },
+          sign: { type: 'action', id: 'sign', text: '分段列表考查 f\' 符号变化', next: 'decide' },
+          decide: { type: 'test', id: 'decide', prompt: 'f\' 在可疑点两侧是否变号（由正变负/由负变正）？', yes: 'extreme', no: 'not' },
+          extreme: { type: 'result', id: 'extreme', text: '该点为极值点，按变号方向定极大/极小' },
+          not: { type: 'result', id: 'not', text: '不是极值点（单调性不变）' },
+        },
+      },
+    ],
+  },
+  {
+    id: 'c2-concave',
+    chapterId: 'ch2',
+    title: '曲线的凹凸性与拐点',
+    summary: '用 f\'\' 符号判凹凸；f\'\'=0 或不存在且两侧变号处为拐点。',
+    formulas: [
+      { id: 'cc-sign', name: '凹凸判定', latex: String.raw`f''(x)>0\Rightarrow\text{凹(上凸)};\ f''(x)<0\Rightarrow\text{凸(下凸)}` },
+      { id: 'cc-inflect', name: '拐点', latex: String.raw`\text{拐点处 }f''=0\text{ 或不存在且两侧变号}` },
+      { id: 'cc-asym', name: '渐近线', latex: String.raw`\text{水平/垂直/斜渐近线}` },
+    ],
+    problemTypes: [
+      {
+        id: 'c2-concave-solve',
+        name: '求凹凸区间与拐点',
+        summary: '求 f\'\' → 找零点/不存在点 → 用二阶符号表判断凹凸与拐点。',
+        start: 'second',
+        nodes: {
+          second: { type: 'action', id: 'second', text: '求 f\'\'(x)', next: 'zeros' },
+          zeros: { type: 'action', id: 'zeros', text: '令 f\'\'(x)=0 与找不存在点', next: 'sign' },
+          sign: { type: 'action', id: 'sign', text: '分区间考查 f\'\' 符号', next: 'decide' },
+          decide: { type: 'test', id: 'decide', prompt: 'f\'\' 在该点两侧是否变号？', yes: 'inflect', no: 'not' },
+          inflect: { type: 'result', id: 'inflect', text: '该点为拐点（凹凸改变）' },
+          not: { type: 'result', id: 'not', text: '不是拐点' },
+        },
+      },
+    ],
+  },
+]
