@@ -30,12 +30,14 @@
 - 已实现全部 6 章：第 1 章 7 概念、第 2 章 9、第 3 章 7、第 4 章 6、第 5 章 7、第 6 章 4，共 40 个概念节点，含公式 / 推导边 / 经典题型 / 解题决策树。
 - 生产校验全部通过：`typecheck`、`lint`、`build`（仅 chunk 体积警告）、Playwright QA（6 章地图节点、公式、决策树分支均渲染，无错误 / 无警告 / 无横向溢出）。
 - 预览服务：`npm run preview -- --port 4173 --host 127.0.0.1`，访问 `http://127.0.0.1:4173/`。
-- `.gitignore` 已创建，忽略 `node_modules/`、`dist/`、`*.local`、`.DS_Store`。
 - 第 1–3 章内容已按用户提供的浙江考点小标题落地；第 4–6 章内容为按标准浙江专升本大纲结构起草并接线，**用户尚未提供第 4–6 章考点小标题**，后续收到后按实际考点微调覆盖即可。
 
 ## 非机密运维备注
-- 仓库新建于 `master`，当前无提交（项目文件大多为 `Untracked`）。
 - 沙箱内跑 `build` / `preview` / QA 需提权；失败命令重跑时用 `require_escalated`。
+- 2026-09-12：源码仓库迁至 GitHub `main` 分支：https://github.com/zbw4588/zhuanshengben-gaoshu-map
+- 2026-09-12：Netlify 项目 `zhuanshengben-gaoshu-map` 已连接 GitHub 持续部署；推送到 `main` 自动生产构建，正式站：https://zhuanshengben-gaoshu-map.netlify.app
+- Netlify CLI 项目关联保存在本机 `.netlify/state.json`，该目录已被 Git 忽略；仓库只保存 `netlify.toml`，不存凭据。
+- `.gitignore` 已忽略 `node_modules/`、`dist/`、`*.local`、`.DS_Store`、`.netlify`。
 
 ## 迭代备注
 - 用户反馈后：地图改为按章节独立树状图（每章一个图，跨章依赖只在详情面板展示，不混入单章地图）；知识卡片设为不可拖动，仅点按查看详情（消除拖拽灵敏度过高的问题）。
