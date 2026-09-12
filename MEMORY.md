@@ -35,8 +35,9 @@
 ## 非机密运维备注
 - 沙箱内跑 `build` / `preview` / QA 需提权；失败命令重跑时用 `require_escalated`。
 - 2026-09-12：源码仓库迁至 GitHub `main` 分支：https://github.com/zbw4588/zhuanshengben-gaoshu-map
-- 2026-09-12：Netlify 项目 `zhuanshengben-gaoshu-map` 已连接 GitHub 持续部署；推送到 `main` 自动生产构建，正式站：https://zhuanshengben-gaoshu-map.netlify.app
-- Netlify CLI 项目关联保存在本机 `.netlify/state.json`，该目录已被 Git 忽略；仓库只保存 `netlify.toml`，不存凭据。
+- 2026-09-12：正式 Netlify 项目为 GitHub 账号关联的 `zhuanshengben-gaoshu`，通过 Netlify GitHub App 持续部署；推送到 `main` 自动生产构建，正式站：https://zhuanshengben-gaoshu.netlify.app
+- 早先创建的 Netlify 项目 `zhuanshengben-gaoshu-map` 仅保留作备份，不再作为正式发布地址。
+- 自动部署不依赖本地 Netlify CLI 登录或本地关联文件；仓库只保存 `netlify.toml`，不存凭据。
 - `.gitignore` 已忽略 `node_modules/`、`dist/`、`*.local`、`.DS_Store`、`.netlify`。
 
 ## 迭代备注

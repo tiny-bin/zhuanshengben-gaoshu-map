@@ -39,6 +39,8 @@
 
 ## 部署
 - 生产站点部署到 Netlify，源码仓库托管在 GitHub；推送到 `main` 分支自动触发生产构建
+- 正式站：https://zhuanshengben-gaoshu.netlify.app； GitHub 仓库：https://github.com/zbw4588/zhuanshengben-gaoshu-map
+- Netlify GitHub App 负责拉取私有仓库并监听 `main` 推送，不依赖本地开发服务器或本地 Netlify CLI 登录
 - Netlify 配置以根目录 `netlify.toml` 为单一事实来源：构建命令 `npm run build`，发布目录 `dist`，Node.js 22
 - `dist/` 是构建产物，不提交到 Git；Netlify 在每次部署时重新生成
 - 发布前必须先通过 `npm run typecheck`、`npm run lint`、`npm run build`

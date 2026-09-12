@@ -79,6 +79,7 @@ src/
 
 ## 7. 部署
 - GitHub 仓库 `main` 分支连接 Netlify 生产环境，每次推送自动构建并发布。
+- 正式站：https://zhuanshengben-gaoshu.netlify.app
 - `netlify.toml` 定义构建命令 `npm run build`、发布目录 `dist` 和 Node.js 22。
 - 部署产物为纯静态文件，无服务端环境变量、数据库或持久化服务。
 - `localStorage` 中的学习进度保存在访问者浏览器本地，不随部署迁移或跨设备同步。
