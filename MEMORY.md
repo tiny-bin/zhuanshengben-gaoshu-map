@@ -34,7 +34,7 @@
 
 ## 非机密运维备注
 - 2026-09-17 起本机环境不再限制文件系统沙箱，`build` / `preview` / QA（`node scripts/qa.mjs`）可直接运行；若重新出现沙箱报错再改用提权。
-- 2026-09-12：源码仓库迁至 GitHub `main` 分支：https://github.com/zbw4588/zhuanshengben-gaoshu-map
+- 2026-09-12：源码仓库迁至 GitHub `main` 分支；2026-09-18 GitHub 用户名由 `zbw4588` 改为 `tiny-bin`，当前地址：https://github.com/tiny-bin/zhuanshengben-gaoshu-map
 - 2026-09-12：正式 Netlify 项目为 GitHub 账号关联的 `zhuanshengben-gaoshu`，通过 Netlify GitHub App 持续部署；推送到 `main` 自动生产构建，正式站：https://zhuanshengben-gaoshu.netlify.app
 - 早先创建的 Netlify 项目 `zhuanshengben-gaoshu-map` 仅保留作备份，不再作为正式发布地址。
 - 自动部署不依赖本地 Netlify CLI 登录或本地关联文件；仓库只保存 `netlify.toml`，不存凭据。
