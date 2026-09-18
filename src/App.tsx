@@ -2,12 +2,14 @@ import { useCallback, useState } from 'react'
 import GraphMap from './components/GraphMap'
 import ChapterIndex from './components/ChapterIndex'
 import ConceptPanel from './components/ConceptPanel'
+import FormulaSearch from './components/FormulaSearch'
 import { useProgress } from './lib/progress'
 import { courseData, getConcept } from './content/data'
 
 export default function App() {
   const { progress, toggle, isMastered } = useProgress()
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [focusFormulaId, setFocusFormulaId] = useState<string | null>(null)
   const [view, setView] = useState<'map' | 'index'>('map')
   const [activeChapterId, setActiveChapterId] = useState(courseData.chapters[0].id)
 
@@ -15,8 +17,22 @@ export default function App() {
     const concept = getConcept(id)
     if (concept) setActiveChapterId(concept.chapterId)
     setSelectedId(id)
+    setFocusFormulaId(null)
   }, [])
-  const handleClose = useCallback(() => setSelectedId(null), [])
+
+  const handleFormulaSelect = useCallback((conceptId: string, formulaId: string) => {
+    const concept = getConcept(conceptId)
+    if (!concept) return
+    setActiveChapterId(concept.chapterId)
+    setSelectedId(conceptId)
+    setFocusFormulaId(formulaId)
+    setView('map')
+  }, [])
+
+  const handleClose = useCallback(() => {
+    setSelectedId(null)
+    setFocusFormulaId(null)
+  }, [])
   const handleChapterChange = useCallback((id: string) => setActiveChapterId(id), [])
 
   return (
@@ -29,6 +45,7 @@ export default function App() {
             <p className="brand-sub">浙江专升本 · 先建构，再记忆</p>
           </div>
         </div>
+        <FormulaSearch onSelect={handleFormulaSelect} />
         <nav className="views">
           <button
             className={`view-btn${view === 'map' ? ' active' : ''}`}
@@ -70,6 +87,7 @@ export default function App() {
               conceptId={selectedId}
               mastered={isMastered(selectedId)}
               onToggleMastery={toggle}
+              focusFormulaId={focusFormulaId}
               onClose={handleClose}
             />
           ) : (

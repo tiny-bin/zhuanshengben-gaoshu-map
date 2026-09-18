@@ -76,6 +76,30 @@ const CHAPTERS = ['第一章', '第二章', '第三章', '第四章', '第五章
   await context.close()
 }
 
+// ---------- Formula search: desktop ----------
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  const page = await newPage(context, 'search-desktop')
+  const input = page.locator('.formula-search-input')
+  await input.fill('泰勒公式')
+  await page.locator('.formula-search-result').first().waitFor({ timeout: 5000 })
+  const resultCount = await page.locator('.formula-search-result').count()
+  const firstResult = await page.locator('.formula-search-result-name').first().textContent()
+  await page.screenshot({ path: join(SHOT_DIR, 'search-desktop.png') })
+  await page.locator('.formula-search-result').first().click()
+  await page.locator('.panel').waitFor({ timeout: 5000 })
+  await page.waitForTimeout(450)
+  report.searchDesktop = {
+    resultCount,
+    firstResult,
+    selectedConcept: await page.locator('.panel-title').textContent(),
+    activeChapter: await page.locator('.chapter-tab.active').textContent(),
+    highlightedFormulas: await page.locator('.formula-item.is-target').count(),
+  }
+  await page.screenshot({ path: join(SHOT_DIR, 'search-detail.png') })
+  await context.close()
+}
+
 // ---------- Mobile ----------
 {
   const context = await browser.newContext({
@@ -95,6 +119,36 @@ const CHAPTERS = ['第一章', '第二章', '第三章', '第四章', '第五章
   const katexCount = await page.locator('.formula-item .katex').count()
   report.mobileFormulas = katexCount
   await page.screenshot({ path: join(SHOT_DIR, 'mobile-detail.png') })
+  await context.close()
+}
+
+// ---------- Formula search: mobile ----------
+{
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    isMobile: true,
+    deviceScaleFactor: 2,
+  })
+  const page = await newPage(context, 'search-mobile')
+  const input = page.locator('.formula-search-input')
+  await input.fill('渐近线')
+  await page.locator('.formula-search-result').first().waitFor({ timeout: 5000 })
+  const overflow = await page.evaluate(() => ({
+    docW: document.documentElement.scrollWidth,
+    winW: window.innerWidth,
+  }))
+  report.searchMobile = {
+    resultCount: await page.locator('.formula-search-result').count(),
+    firstResult: await page.locator('.formula-search-result-name').first().textContent(),
+    horizontalOverflow: overflow.docW > overflow.winW + 2,
+  }
+  await page.screenshot({ path: join(SHOT_DIR, 'search-mobile.png') })
+  await page.locator('.formula-search-result').first().click()
+  await page.locator('.detail.open .panel').waitFor({ timeout: 5000 })
+  await page.waitForTimeout(450)
+  report.searchMobile.selectedConcept = await page.locator('.panel-title').textContent()
+  report.searchMobile.highlightedFormulas = await page.locator('.formula-item.is-target').count()
+  await page.screenshot({ path: join(SHOT_DIR, 'search-mobile-detail.png') })
   await context.close()
 }
 

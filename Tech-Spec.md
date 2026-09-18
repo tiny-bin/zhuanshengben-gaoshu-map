@@ -32,10 +32,10 @@ interface CourseData { chapters: Chapter[]; concepts: Concept[]; edges: Derivati
 
 ## 3. 应用架构
 ### 视图
-- 顶部：应用标题 + 章节切换（桌面）/ 汉堡菜单（移动）。
+- 顶部：应用标题 + 全局公式检索 + 章节地图/索引切换。
 - 主视图 A：全局地图 `GraphMap.tsx`（`ReactFlow`），节点 = 概念（按章节分色），边 = 推导链；`MiniMap` + `Controls`。
 - 主视图 B：章节索引 `ChapterIndex.tsx`（章节 → 知识点列表，可跳转到地图并选中）。
-- 详情面板 `ConceptPanel.tsx`：展示公式（KaTeX）、推导周边、「经典题型」列表可展开为决策树 `DecisionTree.tsx`。
+- 顶栏 `FormulaSearch.tsx`：跨全部章节检索公式，匹配名称、章节、知识点、条件/备注和 LaTeX 原文；结果内嵌 KaTeX 预览，点击后打开知识点并定位高亮目标公式。
 - 布局：桌面左侧为地图/索引，右侧为详情面板；移动端地图全屏，详情为底部抽屉（`<dialog>` / fixed bottom sheet）。
 
 ### 状态管理
@@ -45,6 +45,7 @@ interface CourseData { chapters: Chapter[]; concepts: Concept[]; edges: Derivati
 
 ### 数据流
 - `CourseData` 静态导入 → 构建概念图节点/边 → 点节点 → 更新选中 → `ConceptPanel` 按 id 查询数据渲染。
+- 检索：`FormulaSearch` 查询静态公式索引（`src/lib/formulaSearch.ts`）→ 点击结果更新章节与选中知识点 → 将 `focusFormulaId` 传给 `ConceptPanel` 定位公式。
 - 进度：标记「已掌握/待复习」→ `localStorage` → 地图节点标色（mastered 勾选样式）。
 
 ## 4. 关键实现要点
@@ -60,21 +61,22 @@ src/
   main.tsx
   styles.css
   content/types.ts
-  content/data/limits.ts
-  content/data/derivatives.ts
+  content/data/{limits,derivatives,integrals,series,ode,vectorGeometry}.ts
   content/data/index.ts
   components/GraphMap.tsx
   components/ChapterIndex.tsx
   components/ConceptPanel.tsx
   components/DecisionTree.tsx
+  components/FormulaSearch.tsx
   components/MathFormula.tsx
+  lib/formulaSearch.ts
   lib/progress.ts
   lib/decision.ts
 ```
 
 ## 6. 测试与验收
 - `npm run typecheck`、`npm run lint`、`npm run build`。
-- Playwright（或用截图工具）桌面 + 移动视口自测：地图渲染、KaTeX、点击节点、决策树、响应式。
+- Playwright（或用截图工具）桌面 + 移动视口自测：地图渲染、KaTeX、点击节点、决策树、公式检索点击定位、响应式。
 - 内容抽查：极限/导数公式与推导、决策树判断逻辑对照教材。
 
 ## 7. 部署

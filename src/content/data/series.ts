@@ -133,6 +133,113 @@ export const seriesConcepts: Concept[] = [
     ],
   },
   {
+    id: 'c4-taylor',
+    chapterId: 'ch4',
+    title: '泰勒公式与麦克劳林公式',
+    summary:
+      '用多项式在一点附近逼近函数：泰勒公式在 x₀ 处展开，取 x₀=0 即麦克劳林公式，拉格朗日余项刻画误差。',
+    formulas: [
+      {
+        id: 'taylor-lagrange',
+        name: '泰勒公式（拉格朗日余项）',
+        latex: String.raw`f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(x_{0})}{k!}(x-x_{0})^{k}+R_{n}(x)`,
+        conditions: 'f 在含 x₀ 与 x 的区间上有 n+1 阶导数',
+      },
+      {
+        id: 'taylor-remainder',
+        name: '泰勒公式的拉格朗日余项',
+        latex: String.raw`R_{n}(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_{0})^{n+1}`,
+        note: 'ξ 介于 x₀ 与 x 之间',
+      },
+      {
+        id: 'maclaurin-lagrange',
+        name: '麦克劳林公式（拉格朗日余项）',
+        latex: String.raw`f(x)=\sum_{k=0}^{n}\frac{f^{(k)}(0)}{k!}x^{k}+R_{n}(x)`,
+        note: '泰勒公式中取 x₀=0',
+      },
+      {
+        id: 'maclaurin-remainder',
+        name: '麦克劳林公式的拉格朗日余项',
+        latex: String.raw`R_{n}(x)=\frac{f^{(n+1)}(\theta x)}{(n+1)!}x^{n+1}\quad(0<\theta<1)`,
+        note: '把 ξ 写成 θx，便于估计误差',
+      },
+      {
+        id: 'mac-e',
+        name: 'eˣ 的展开',
+        latex: String.raw`e^{x}=\sum_{k=0}^{n}\frac{x^{k}}{k!}+\frac{e^{\theta x}}{(n+1)!}x^{n+1}`,
+        note: '展开到 n 次项，余项为 n+1 次',
+      },
+      {
+        id: 'mac-sin',
+        name: 'sin x 的展开',
+        latex: String.raw`\sin x=\sum_{k=1}^{m}(-1)^{k-1}\frac{x^{2k-1}}{(2k-1)!}+(-1)^{m}\frac{\sin(\theta x)}{(2m)!}x^{2m}`,
+        note: '展开到 2m-1 次项，余项为 2m 次',
+      },
+      {
+        id: 'mac-cos',
+        name: 'cos x 的展开',
+        latex: String.raw`\cos x=\sum_{k=0}^{m}(-1)^{k}\frac{x^{2k}}{(2k)!}+(-1)^{m+1}\frac{\sin(\theta x)}{(2m+1)!}x^{2m+1}`,
+        note: '展开到 2m 次项，余项为 2m+1 次',
+      },
+      {
+        id: 'mac-ln',
+        name: 'ln(1+x) 的展开',
+        latex: String.raw`\ln(1+x)=\sum_{k=1}^{n}(-1)^{k+1}\frac{x^{k}}{k}+\frac{(-1)^{n}x^{n+1}}{(n+1)(1+\theta x)^{n+1}}`,
+        note: '展开到 n 次项，余项为 n+1 次',
+      },
+    ],
+    problemTypes: [
+      {
+        id: 'c4-taylor-limit',
+        name: '用泰勒/麦克劳林公式求极限',
+        summary:
+          '核心是定阶：把分子分母都展开到分母的阶，低次项相消后约分取极限；阶数不够就再多展一阶。',
+        start: 'hasfunc',
+        nodes: {
+          hasfunc: {
+            type: 'test',
+            id: 'hasfunc',
+            prompt: '式子里含 eˣ、sin x、cos x、ln(1+x) 这类函数吗？',
+            yes: 'order',
+            no: 'fallback',
+          },
+          fallback: {
+            type: 'action',
+            id: 'fallback',
+            text: '改用等价无穷小或洛必达法则',
+            next: 'done',
+          },
+          order: {
+            type: 'action',
+            id: 'order',
+            text: '按分母的阶 k 展开：分母是 xᵏ 就展到 xᵏ 项，余项记作 o(xᵏ)',
+            next: 'check',
+          },
+          check: {
+            type: 'test',
+            id: 'check',
+            prompt: '展开后低次项能相消、约掉 xᵏ 吗？',
+            yes: 'compute',
+            no: 'raise',
+          },
+          raise: {
+            type: 'action',
+            id: 'raise',
+            text: '阶数不够：再多展一阶（k → k+1）后重新代入',
+            next: 'compute',
+          },
+          compute: {
+            type: 'action',
+            id: 'compute',
+            text: '约分后取极限（余项 o(xᵏ)/xᵏ → 0）',
+            next: 'done',
+          },
+          done: { type: 'result', id: 'done', text: '得到极限值' },
+        },
+      },
+    ],
+  },
+  {
     id: 'c4-expansion',
     chapterId: 'ch4',
     title: '函数展开成幂级数',

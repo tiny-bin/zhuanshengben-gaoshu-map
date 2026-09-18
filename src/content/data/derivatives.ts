@@ -235,11 +235,28 @@ export const derivativesConcepts: Concept[] = [
     id: 'c2-concave',
     chapterId: 'ch2',
     title: '曲线的凹凸性与拐点',
-    summary: '用 f\'\' 符号判凹凸；f\'\'=0 或不存在且两侧变号处为拐点。',
+    summary: '用 f\'\' 符号判凹凸；f\'\'=0 或不存在且两侧变号处为拐点；渐近线分垂直、水平、斜三类，各自用极限判定。',
     formulas: [
       { id: 'cc-sign', name: '凹凸判定', latex: String.raw`f''(x)>0\Rightarrow\text{凹(上凸)};\ f''(x)<0\Rightarrow\text{凸(下凸)}` },
       { id: 'cc-inflect', name: '拐点', latex: String.raw`\text{拐点处 }f''=0\text{ 或不存在且两侧变号}` },
-      { id: 'cc-asym', name: '渐近线', latex: String.raw`\text{水平/垂直/斜渐近线}` },
+      {
+        id: 'cc-asym-vertical',
+        name: '垂直渐近线',
+        latex: String.raw`\lim_{x\to x_{0}}f(x)=\infty\Rightarrow x=x_{0}`,
+        note: '在无定义点、分段点处找',
+      },
+      {
+        id: 'cc-asym-horizontal',
+        name: '水平渐近线',
+        latex: String.raw`\lim_{x\to\infty}f(x)=b\Rightarrow y=b`,
+        note: 'x→+∞ 与 x→−∞ 分别求，最多两条',
+      },
+      {
+        id: 'cc-asym-oblique',
+        name: '斜渐近线',
+        latex: String.raw`\begin{aligned}k&=\lim_{x\to\infty}\frac{f(x)}{x},\quad k\ne 0\\ b&=\lim_{x\to\infty}[f(x)-kx]\Rightarrow y=kx+b\end{aligned}`,
+        note: '要求 k 存在且 k≠0',
+      },
     ],
     problemTypes: [
       {
@@ -254,6 +271,45 @@ export const derivativesConcepts: Concept[] = [
           decide: { type: 'test', id: 'decide', prompt: 'f\'\' 在该点两侧是否变号？', yes: 'inflect', no: 'not' },
           inflect: { type: 'result', id: 'inflect', text: '该点为拐点（凹凸改变）' },
           not: { type: 'result', id: 'not', text: '不是拐点' },
+        },
+      },
+      {
+        id: 'c2-concave-asymptote',
+        name: '求曲线的渐近线',
+        summary: '先找无定义点定垂直渐近线；再分别看 x→+∞ 与 x→−∞：极限是有限常数就是水平渐近线，否则求 k=lim f(x)/x 与 b 判斜渐近线。',
+        start: 'vertical',
+        nodes: {
+          vertical: {
+            type: 'action',
+            id: 'vertical',
+            text: '先找 f 的无定义点 x₀（分母为零、对数真数为零等）：若 x→x₀ 时 f(x) 趋于 ∞，则 x=x₀ 是垂直渐近线',
+            next: 'hcheck',
+          },
+          hcheck: {
+            type: 'test',
+            id: 'hcheck',
+            prompt: '再分别求 x→+∞ 与 x→−∞：某方向极限是有限常数 b 吗？',
+            yes: 'horizontal',
+            no: 'kcheck',
+          },
+          horizontal: {
+            type: 'result',
+            id: 'horizontal',
+            text: '该方向有水平渐近线 y=b（同一方向不会再出现斜渐近线）',
+          },
+          kcheck: {
+            type: 'test',
+            id: 'kcheck',
+            prompt: '该方向 k=lim f(x)/x 存在且 k≠0 吗？',
+            yes: 'oblique',
+            no: 'none',
+          },
+          oblique: {
+            type: 'result',
+            id: 'oblique',
+            text: '该方向有斜渐近线 y=kx+b，其中 b=lim [f(x)−kx]',
+          },
+          none: { type: 'result', id: 'none', text: '该方向既无水平也无斜渐近线' },
         },
       },
     ],

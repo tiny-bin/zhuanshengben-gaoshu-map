@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { courseData, getConcept } from '../content/data'
 import type { EdgeKind } from '../content/types'
 import { describePath } from '../lib/decision'
@@ -14,11 +15,27 @@ interface Props {
   conceptId: string
   mastered: boolean
   onToggleMastery: (conceptId: string) => void
+  focusFormulaId?: string | null
   onClose?: () => void
 }
 
-export default function ConceptPanel({ conceptId, mastered, onToggleMastery, onClose }: Props) {
+export default function ConceptPanel({
+  conceptId,
+  mastered,
+  onToggleMastery,
+  focusFormulaId,
+  onClose,
+}: Props) {
   const concept = getConcept(conceptId)
+  useEffect(() => {
+    if (!concept || !focusFormulaId) return
+    const targetId = formulaElementId(concept.id, focusFormulaId)
+    const timer = window.setTimeout(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 80)
+    return () => window.clearTimeout(timer)
+  }, [concept, focusFormulaId])
+
   if (!concept) {
     return (
       <div className="panel-empty">
@@ -59,10 +76,15 @@ export default function ConceptPanel({ conceptId, mastered, onToggleMastery, onC
         ) : (
           <ul className="formula-list">
             {concept.formulas.map((f) => (
-              <li key={f.id} className="formula-item">
+              <li
+                key={f.id}
+                id={formulaElementId(concept.id, f.id)}
+                className={`formula-item${focusFormulaId === f.id ? ' is-target' : ''}`}
+              >
                 <div className="formula-name">{f.name}</div>
                 <MathFormula latex={f.latex} displayMode />
                 {f.conditions ? <div className="formula-cond">{f.conditions}</div> : null}
+                {f.note ? <div className="formula-cond">{f.note}</div> : null}
               </li>
             ))}
           </ul>
@@ -117,6 +139,10 @@ export default function ConceptPanel({ conceptId, mastered, onToggleMastery, onC
       </section>
     </div>
   )
+}
+
+function formulaElementId(conceptId: string, formulaId: string) {
+  return `formula-${conceptId}-${formulaId}`
 }
 
 function conceptTitle(id: string) {

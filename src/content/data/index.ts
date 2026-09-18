@@ -81,11 +81,14 @@ const edges: DerivationEdge[] = [
   { from: 'c4-series', to: 'c4-positive', kind: 'prerequisite', label: '常数项级数 → 正项审敛' },
   { from: 'c4-positive', to: 'c4-alternating', kind: 'derives', label: '正项方法 → 交错/收敛性' },
   { from: 'c4-series', to: 'c4-power', kind: 'prerequisite', label: '常数项级数 → 幂级数' },
-  { from: 'c4-power', to: 'c4-expansion', kind: 'derives', label: '幂级数 → 函数展开' },
+  { from: 'c4-power', to: 'c4-taylor', kind: 'prerequisite', label: '幂级数 → 泰勒公式' },
+  { from: 'c4-taylor', to: 'c4-expansion', kind: 'derives', label: '泰勒公式 → 泰勒级数' },
   { from: 'c4-power', to: 'c4-sum', kind: 'application', label: '幂级数 → 求和函数' },
   { from: 'c4-expansion', to: 'c4-sum', kind: 'derives', label: '已知展开 → 求和函数' },
   // 跨章：泰勒展开依赖高阶导数
   { from: 'c2-derivative', to: 'c4-expansion', kind: 'prerequisite', label: '高阶导数 → 泰勒展开' },
+  { from: 'c2-higher', to: 'c4-taylor', kind: 'prerequisite', label: '高阶导数 → 泰勒公式' },
+  { from: 'c2-mvt', to: 'c4-taylor', kind: 'prerequisite', label: '中值定理 → 泰勒公式' },
   // 第五章内部推导链（常微分方程）
   { from: 'c5-basic', to: 'c5-separable', kind: 'derives', label: '概念 → 可分离变量' },
   { from: 'c5-basic', to: 'c5-linear-first', kind: 'derives', label: '概念 → 一阶线性' },
