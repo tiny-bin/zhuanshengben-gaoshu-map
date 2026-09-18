@@ -13,6 +13,7 @@ export const limitsConcepts: Concept[] = [
       { id: 'f-even', name: '偶函数', latex: String.raw`f(-x)=f(x)` },
       { id: 'f-odd', name: '奇函数', latex: String.raw`f(-x)=-f(x)` },
       { id: 'f-period', name: '周期函数', latex: String.raw`f(x+T)=f(x),\ T>0` },
+      { id: 'f-bounded', name: '有界性', latex: String.raw`\exists M>0,\ \forall x\in X:\ |f(x)|\le M` },
     ],
     problemTypes: [
       {
@@ -38,6 +39,10 @@ export const limitsConcepts: Concept[] = [
     summary: '极限是后续连续、导数、积分的基础。掌握左右极限、四则运算法则与保号性。',
     formulas: [
       { id: 'lim-def', name: '极限定义', latex: String.raw`\lim_{x\to x_0}f(x)=A` },
+      { id: 'lim-left-right', name: '左极限与右极限', latex: String.raw`f(x_{0}^{-})=\lim_{x\to x_{0}^{-}}f(x),\quad f(x_{0}^{+})=\lim_{x\to x_{0}^{+}}f(x)` },
+      { id: 'lim-lr-iff', name: '极限存在的充要条件', latex: String.raw`\lim_{x\to x_{0}}f(x)=A\ \Longleftrightarrow\ f(x_{0}^{-})=f(x_{0}^{+})=A` },
+      { id: 'lim-unique', name: '唯一性', latex: String.raw`\lim_{x\to x_{0}}f(x)\ \text{存在}\ \Rightarrow\ \text{极限值唯一}` },
+      { id: 'lim-bounded', name: '局部有界性', latex: String.raw`\lim_{x\to x_{0}}f(x)=A\ \Rightarrow\ f\ \text{在}\ x_{0}\ \text{的某去心邻域内有界}` },
       { id: 'lim-rule', name: '四则运算', latex: String.raw`\lim(f\pm g)=\lim f\pm\lim g` },
       { id: 'lim-product', name: '乘积', latex: String.raw`\lim(fg)=\lim f\cdot\lim g` },
       { id: 'lim-quotient', name: '商（分母非零）', latex: String.raw`\lim\frac{f}{g}=\frac{\lim f}{\lim g}` },
@@ -173,9 +178,14 @@ export const limitsConcepts: Concept[] = [
     summary: '连续 = 极限值 = 函数值。初等函数在其定义区间内连续。',
     formulas: [
       { id: 'cont-def', name: '连续定义', latex: String.raw`\lim_{x\to x_0}f(x)=f(x_0)` },
+      { id: 'cont-iff', name: '连续的充要条件', latex: String.raw`f\ \text{在}\ x_{0}\ \text{连续}\ \Longleftrightarrow\ f(x_{0}^{-})=f(x_{0}^{+})=f(x_{0})` },
       { id: 'cont-left', name: '左连续', latex: String.raw`f(x_0^{-})=f(x_0)` },
       { id: 'cont-right', name: '右连续', latex: String.raw`f(x_0^{+})=f(x_0)` },
       { id: 'cont-elem', name: '初等函数连续性', latex: String.raw`\text{初等函数在定义区间内连续}` },
+      { id: 'cont-max-min', name: '最值定理', latex: String.raw`f\in C[a,b]\ \Rightarrow\ \exists x_{1},x_{2}\in[a,b]:\ f(x_{1})\le f(x)\le f(x_{2})` },
+      { id: 'cont-bounded', name: '有界性定理', latex: String.raw`f\in C[a,b]\ \Rightarrow\ \exists M>0:\ |f(x)|\le M` },
+      { id: 'cont-ivt', name: '介值定理', latex: String.raw`f\in C[a,b],\ \mu\ \text{介于}\ f(a),f(b)\ \text{之间}\ \Rightarrow\ \exists\xi\in[a,b]:\ f(\xi)=\mu` },
+      { id: 'cont-zero', name: '零点存在定理', latex: String.raw`f\in C[a,b],\ f(a)f(b)<0\ \Rightarrow\ \exists\xi\in(a,b):\ f(\xi)=0` },
     ],
     problemTypes: [
       {
@@ -189,6 +199,21 @@ export const limitsConcepts: Concept[] = [
           r: { type: 'action', id: 'r', text: '计算右极限 f(x₀⁺)', next: 'eq' },
           eq: { type: 'action', id: 'eq', text: '令 左极限=右极限=f(x₀)，解参数', next: 'done' },
           done: { type: 'result', id: 'done', text: '得到参数取值' },
+        },
+      },
+      {
+        id: 'c1-continuity-zero',
+        name: '用零点存在定理证方程有根',
+        summary: '三步走：移项构造 f(x)、说明闭区间上连续、验证端点异号。',
+        start: 'build',
+        nodes: {
+          build: { type: 'action', id: 'build', text: '移项构造 f(x)，把方程写成 f(x)=0', next: 'cont' },
+          cont: { type: 'test', id: 'cont', prompt: 'f 在所选闭区间 [a,b] 上连续吗？', yes: 'sign', no: 'fix' },
+          fix: { type: 'action', id: 'fix', text: '换一个避开无定义点的闭区间，使 f 连续', next: 'sign' },
+          sign: { type: 'test', id: 'sign', prompt: '端点值异号（f(a)·f(b)<0）吗？', yes: 'done', no: 'other' },
+          done: { type: 'result', id: 'done', text: '存在 ξ∈(a,b) 使 f(ξ)=0，即方程至少有一个根' },
+          other: { type: 'action', id: 'other', text: '端点同号：先用介值定理取中间值，或配合单调性把根压在更小的区间内', next: 'other-done' },
+          'other-done': { type: 'result', id: 'other-done', text: '在小区间上再用零点存在定理，得根存在（加单调性即可得唯一）' },
         },
       },
     ],

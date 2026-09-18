@@ -71,6 +71,8 @@ const edges: DerivationEdge[] = [
   { from: 'c3-integral-concept', to: 'c3-definite-integral', kind: 'derives', label: '原函数 → 定积分' },
   { from: 'c3-definite-integral', to: 'c3-definite-methods', kind: 'derives', label: '定积分 → 计算法' },
   { from: 'c3-definite-methods', to: 'c3-definite-application', kind: 'derives', label: '计算 → 应用' },
+  { from: 'c3-definite-integral', to: 'c3-improper-integral', kind: 'derives', label: '定积分 → 广义积分' },
+  { from: 'c1-limits', to: 'c3-improper-integral', kind: 'prerequisite', label: '极限 → 广义积分判敛' },
   { from: 'c3-integral-overview', to: 'c3-integral-methods', kind: 'application', label: '总览 → 方法' },
   { from: 'c3-integral-overview', to: 'c3-definite-methods', kind: 'application', label: '总览 → 定积分方法' },
   // 跨章：积分由微分与极限引出（仅在详情面板展示来源）

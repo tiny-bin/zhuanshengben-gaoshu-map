@@ -573,6 +573,35 @@ button {
   gap: 12px;
 }
 
+/* 深层分支再对半分会把宽度切到几十像素，第二层起改为纵向堆叠 */
+.dt-branches-stacked {
+  grid-template-columns: 1fr;
+}
+
+/* 卡片每嵌套一层就吃掉 24px 左右内边距，到第 4 层只剩 60 多像素宽。
+   第二层起改成"左侧引导线 + 小缩进"的扁平样式，宽度只随缩进 10px 递减，
+   文字始终有完整行宽；左边框颜色沿用动作/判断/结论的语义色。 */
+.dt-node .dt-node {
+  padding: 8px 0 8px 10px;
+  border: none;
+  border-left: 3px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+}
+
+.dt-node .dt-node.dt-action {
+  border-left-color: #4a90d9;
+}
+
+.dt-node .dt-node.dt-test {
+  border-left-color: var(--warn);
+}
+
+.dt-node .dt-node.dt-result {
+  border-left-color: var(--ok);
+  background: transparent;
+}
+
 .dt-branch {
   display: flex;
   flex-direction: column;

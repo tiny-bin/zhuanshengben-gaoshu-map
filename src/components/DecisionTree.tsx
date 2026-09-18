@@ -34,7 +34,7 @@ function NodeFlow({ id, problem, depth }: NodeFlowProps) {
     <div className="dt-node dt-test">
       <span className="dt-kind">判断</span>
       <div className="dt-text">{node.prompt}</div>
-      <div className="dt-branches">
+      <div className={depth === 0 ? 'dt-branches' : 'dt-branches dt-branches-stacked'}>
         <div className="dt-branch">
           <div className="dt-branch-head dt-a">A 路线 · 符合</div>
           <NodeFlow id={node.yes} problem={problem} depth={depth + 1} />
