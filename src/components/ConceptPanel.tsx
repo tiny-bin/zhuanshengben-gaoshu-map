@@ -4,6 +4,7 @@ import type { EdgeKind } from '../content/types'
 import { describePath } from '../lib/decision'
 import DecisionTree from './DecisionTree'
 import MathFormula from './MathFormula'
+import WorkedExamples from './WorkedExamples'
 
 const kindLabel: Record<EdgeKind, string> = {
   derives: '推导',
@@ -90,6 +91,13 @@ export default function ConceptPanel({
           </ul>
         )}
       </section>
+
+      {concept.examples && concept.examples.length > 0 ? (
+        <section className="panel-section">
+          <h3>例题精讲</h3>
+          <WorkedExamples examples={concept.examples} />
+        </section>
+      ) : null}
 
       <section className="panel-section">
         <h3>推导链</h3>

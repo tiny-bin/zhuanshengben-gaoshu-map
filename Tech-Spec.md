@@ -20,11 +20,17 @@ type DecisionNode =
   | { type: 'result'; id: string; text: string };
 interface ProblemType {
   id: string; name: string; summary: string;
-  steps: DecisionNode[]; start: string; kind: 'start' | 'test' | 'action' | 'result';
+  start: string; nodes: Record<string, DecisionNode>;
+}
+/** 例题精讲：题目 + 分步过程 + 答案，用来把公式落到具体数字上 */
+interface ExampleStep { text: string; latex?: string }
+interface Example {
+  id: string; problem: string; problemLatex?: string;
+  steps: ExampleStep[]; answer: string; answerLatex?: string;
 }
 interface Concept {
   id: string; chapterId: string; title: string; summary: string;
-  formulas: Formula[]; problemTypes: ProblemType[];
+  formulas: Formula[]; examples?: Example[]; problemTypes: ProblemType[];
 }
 interface CourseData { chapters: Chapter[]; concepts: Concept[]; edges: DerivationEdge[] }
 ```

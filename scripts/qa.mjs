@@ -63,14 +63,21 @@ const CHAPTERS = ['第一章', '第二章', '第三章', '第四章', '第五章
     await page.locator('.cf-node').first().click()
     await page.locator('.panel').waitFor({ timeout: 5000 })
     const formulas = await page.locator('.formula-item .katex').count()
+    const examples = await page.locator('.example').count()
+    const katexErrors = await page.locator('.katex-error').count()
+    if (katexErrors > 0) {
+      report.errors.push(`desktop-${label}: ${katexErrors} 处公式渲染失败（.katex-error）`)
+    }
     const problems = await page.locator('.problem-summary').count()
     let branches = 0
     if (problems > 0) {
       await page.locator('.problem-summary').first().click()
-      await page.locator('.dt').waitFor({ timeout: 5000 })
-      branches = await page.locator('.dt-branch').count()
+      // 一个知识点可以有多个题型：折叠的 details 内容仍然留在 DOM 里，必须锁定第一棵决策树
+      const tree = page.locator('.dt').first()
+      await tree.waitFor({ timeout: 5000 })
+      branches = await tree.locator('.dt-branch').count()
     }
-    report.chapters.push({ label, nodes, formulas, branches })
+    report.chapters.push({ label, nodes, formulas, examples, branches })
     await page.screenshot({ path: join(SHOT_DIR, `desktop-${label}-detail.png`) })
   }
   await context.close()
