@@ -53,6 +53,7 @@ const edges: DerivationEdge[] = [
   { from: 'c1-limits', to: 'c1-squeeze', kind: 'derives', label: '存在准则' },
   { from: 'c1-limits', to: 'c1-continuity', kind: 'derives', label: '极限=函数值 → 连续' },
   { from: 'c1-continuity', to: 'c1-discontinuity', kind: 'derives', label: '不满足连续 → 间断' },
+  { from: 'c4-taylor', to: 'c1-infinitesimal', kind: 'prerequisite', label: '泰勒展开可推出这些减法公式' },
   // 跨章：导数由极限定义
   { from: 'c1-limits', to: 'c2-derivative', kind: 'prerequisite', label: '导数由极限定义' },
   { from: 'c1-functions', to: 'c2-rules', kind: 'prerequisite', label: '基本初等函数' },

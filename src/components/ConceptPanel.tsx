@@ -16,6 +16,8 @@ interface Props {
   conceptId: string
   mastered: boolean
   onToggleMastery: (conceptId: string) => void
+  isFavorite: (conceptId: string, formulaId: string) => boolean
+  onToggleFavorite: (conceptId: string, formulaId: string) => void
   focusFormulaId?: string | null
   onClose?: () => void
 }
@@ -24,6 +26,8 @@ export default function ConceptPanel({
   conceptId,
   mastered,
   onToggleMastery,
+  isFavorite,
+  onToggleFavorite,
   focusFormulaId,
   onClose,
 }: Props) {
@@ -82,7 +86,19 @@ export default function ConceptPanel({
                 id={formulaElementId(concept.id, f.id)}
                 className={`formula-item${focusFormulaId === f.id ? ' is-target' : ''}`}
               >
-                <div className="formula-name">{f.name}</div>
+                <div className="formula-head">
+                  <div className="formula-name">{f.name}</div>
+                  <button
+                    className={`formula-favorite${isFavorite(concept.id, f.id) ? ' is-favorite' : ''}`}
+                    onClick={() => onToggleFavorite(concept.id, f.id)}
+                    type="button"
+                    aria-label={`${isFavorite(concept.id, f.id) ? '取消收藏' : '收藏'}${f.name}`}
+                    aria-pressed={isFavorite(concept.id, f.id)}
+                    title={isFavorite(concept.id, f.id) ? '取消收藏' : '收藏公式'}
+                  >
+                    {isFavorite(concept.id, f.id) ? '★' : '☆'}
+                  </button>
+                </div>
                 <MathFormula latex={f.latex} displayMode />
                 {f.conditions ? <div className="formula-cond">{f.conditions}</div> : null}
                 {f.note ? <div className="formula-cond">{f.note}</div> : null}

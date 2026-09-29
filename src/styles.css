@@ -13,6 +13,7 @@
   --danger: #a34a72;
   --radius: 8px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --tree-line: #cfd6e0;
 }
 
 * {
@@ -130,6 +131,10 @@ button {
 }
 
 .view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border: none;
   background: transparent;
   color: var(--muted);
@@ -144,6 +149,20 @@ button {
   background: #fff;
   color: var(--ink);
   box-shadow: var(--shadow);
+}
+
+.view-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 /* Map legend */
@@ -401,11 +420,49 @@ button {
   padding: 10px 12px;
 }
 
+.formula-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .formula-name {
   font-size: 12px;
   color: var(--accent);
   font-weight: 600;
-  margin-bottom: 4px;
+  min-width: 0;
+}
+
+.formula-favorite {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  color: #9aa1ab;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.formula-favorite:hover,
+.formula-favorite:focus-visible {
+  outline: 0;
+  border-color: #d6a44f;
+  color: #b98228;
+}
+
+.formula-favorite.is-favorite {
+  border-color: #e2b65e;
+  background: #fff8e8;
+  color: #b98228;
 }
 
 .formula-item .math {
@@ -426,6 +483,174 @@ button {
 
 .math .katex {
   font-size: 1.05em;
+}
+
+/* Favorites */
+.favorites {
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 26px 40px;
+}
+
+.favorites-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.favorites-head h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.favorites-summary {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.favorites-empty {
+  margin: 0;
+  padding: 34px 20px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.favorites-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.favorites-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.favorites-section-head h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.favorites-section-head span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.favorites-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.favorite-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.favorite-card:hover {
+  border-color: #c8d3dc;
+  box-shadow: var(--shadow);
+}
+
+.favorite-open {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 12px 4px 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+
+.favorite-open:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.favorite-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.favorite-card-name {
+  min-width: 0;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.favorite-card-context {
+  flex: 0 1 48%;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.favorite-card-formula {
+  display: block;
+  overflow-x: auto;
+}
+
+.favorite-card-formula .katex-display {
+  margin: 0;
+  text-align: left;
+}
+
+.favorite-card-formula .katex {
+  font-size: 1em;
+}
+
+.favorite-card-note {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.favorite-remove {
+  width: 30px;
+  height: 30px;
+  margin: 12px 12px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: #fff8e8;
+  color: #b98228;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.favorite-remove:hover,
+.favorite-remove:focus-visible {
+  outline: 0;
+  background: #f8e9c9;
 }
 
 /* Examples（例题精讲） */
@@ -733,6 +958,79 @@ button {
   color: var(--danger);
 }
 
+/* 树状图连线：根层两个分支从父卡片"分叉"出去（主干 + 横杆 + 垂线），
+   第二层起是纵向堆叠，改用左侧竖直轨道 + 横向刻度。
+   连线只是视觉引导，用 --tree-line 统一颜色，避免和卡片语义色抢注意力。 */
+
+.dt-branches {
+  position: relative;
+}
+
+.dt-branches::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 2px;
+  height: 6px;
+  margin-left: -1px;
+  background: var(--tree-line);
+}
+
+.dt-branches::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: var(--tree-line);
+}
+
+.dt-branch {
+  position: relative;
+}
+
+.dt-branch::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 2px;
+  height: 6px;
+  margin-left: -1px;
+  background: var(--tree-line);
+}
+
+/* 纵向堆叠层不额外占宽度：把竖轨和刻度画到父卡片自身的左内边距里
+   （负偏移），否则每嵌套一层就多缩进 16px，深树会被挤到溢出面板。 */
+.dt-branches-stacked::before {
+  left: -8px;
+  margin-left: -1px;
+}
+
+.dt-branches-stacked::after {
+  top: -6px;
+  left: -8px;
+  right: auto;
+  width: 2px;
+  height: 100%;
+}
+
+.dt-branches-stacked .dt-branch::before {
+  top: 18px;
+  left: -8px;
+  width: 8px;
+  height: 2px;
+  margin-left: 0;
+}
+
+/* 根节点（拿到题目）稍微加重，让"树"的起点一眼可见 */
+.dt-flow > .dt-node {
+  border-color: #c3ccd9;
+  background: #f6f8fb;
+}
+
 /* Empty / placeholder */
 .panel-empty {
   padding: 30px 22px;
@@ -781,7 +1079,8 @@ button {
     right: 0;
     bottom: 0;
     top: auto;
-    max-height: 84vh;
+    /* 抽屉是 fixed 定位，高度必须减掉顶栏（含搜索框），否则标题会钻到搜索栏下面被盖住 */
+    max-height: calc(100vh - var(--topbar-h, 72px) - 8px);
     border-left: none;
     border-top: 1px solid var(--line);
     box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.14);
@@ -810,8 +1109,45 @@ button {
     grid-template-columns: 1fr;
   }
 
+  /* 窄屏下根层也变成单列，连线跟着换成左侧竖轨（同样用负偏移，不占宽度） */
+  .dt-branches::before {
+    left: -8px;
+    margin-left: -1px;
+  }
+
+  .dt-branches::after {
+    left: -8px;
+    right: auto;
+    width: 2px;
+    height: 100%;
+  }
+
+  .dt-branches .dt-branch::before {
+    top: 18px;
+    left: -8px;
+    width: 8px;
+    height: 2px;
+    margin-left: 0;
+  }
+
   .index {
     padding: 18px 16px 30px;
+  }
+
+  .favorites {
+    padding: 18px 16px 30px;
+  }
+
+  .favorite-card-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .favorite-card-context {
+    flex: none;
+    max-width: 100%;
+    text-align: left;
   }
 }
 

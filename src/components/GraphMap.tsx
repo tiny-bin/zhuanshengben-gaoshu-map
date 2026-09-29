@@ -1,15 +1,13 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import {
   ReactFlow,
   ReactFlowProvider,
   Background,
   BackgroundVariant,
   Controls,
-  MiniMap,
   Panel,
   useNodesState,
   useEdgesState,
-  useReactFlow,
   MarkerType,
   Handle,
   Position,
@@ -19,8 +17,6 @@ import type { Concept, EdgeKind, DerivationEdge } from '../content/types'
 import type { ProgressState } from '../lib/progress'
 import { courseData, conceptsOfChapter, getChapter } from '../content/data'
 
-const NODE_WIDTH = 210
-const NODE_HEIGHT = 70
 const X_STEP = 320
 const Y_STEP = 130
 
@@ -66,6 +62,10 @@ function ConceptNode({ data }: NodeProps<ConceptFlowNode>) {
 }
 
 const nodeTypes: NodeTypes = { concept: ConceptNode }
+
+// 章节标签条的横向滚动位置。GraphMap 会随章节切换整体重建，
+// 放在模块作用域里才能在重建后恢复，而不是每次跳回最左边。
+let tabsScrollLeft = 0
 
 function layoutChapter(
   concepts: Concept[],
@@ -156,7 +156,14 @@ function MapInner({ selectedId, progress, onSelect, activeChapterId, onChapterCh
   const initialEdges = useMemo(() => buildChapterEdges(activeChapterId), [activeChapterId])
   const [nodes, setNodes, onNodesChange] = useNodesState<ConceptFlowNode>(initialNodes)
   const [edges, , onEdgesChange] = useEdgesState(initialEdges)
-  const { setCenter } = useReactFlow()
+  const tabsRef = useRef<HTMLDivElement | null>(null)
+
+  // 切章时外层用 key 重建整个 ReactFlow，这样 React Flow 自己的初始化 fitView 会
+  // 正确适配新章节（手动再调 fitView 得到的包围盒会偏小，宽章节右侧会被裁掉）。
+  // 代价是章节标签那一行也会被重建，所以滚动位置存在模块作用域里，重建后恢复。
+  useEffect(() => {
+    if (tabsRef.current) tabsRef.current.scrollLeft = tabsScrollLeft
+  }, [])
 
   useEffect(() => {
     setNodes((nds) =>
@@ -167,14 +174,6 @@ function MapInner({ selectedId, progress, onSelect, activeChapterId, onChapterCh
       })),
     )
   }, [selectedId, progress, setNodes])
-
-  useEffect(() => {
-    if (!selectedId) return
-    const match = nodes.find((n) => n.id === selectedId)
-    if (match) {
-      setCenter(match.position.x + NODE_WIDTH / 2, match.position.y + NODE_HEIGHT / 2, { zoom: 1 })
-    }
-  }, [selectedId, nodes, setCenter])
 
   const legend = useMemo(() => {
     const chapter = getChapter(activeChapterId)
@@ -217,13 +216,14 @@ function MapInner({ selectedId, progress, onSelect, activeChapterId, onChapterCh
     >
       <Background variant={BackgroundVariant.Dots} gap={18} size={1.4} color="#d4d8df" />
       <Controls position="bottom-right" />
-      <MiniMap
-        position="top-right"
-        nodeColor={(n) => (n.data as unknown as ConceptNodeData).color}
-        maskColor="rgba(255,255,255,0.6)"
-      />
       <Panel position="top-center">
-        <div className="chapter-tabs">
+        <div
+          className="chapter-tabs"
+          ref={tabsRef}
+          onScroll={(e) => {
+            tabsScrollLeft = e.currentTarget.scrollLeft
+          }}
+        >
           {courseData.chapters.map((ch) => (
             <button
               key={ch.id}

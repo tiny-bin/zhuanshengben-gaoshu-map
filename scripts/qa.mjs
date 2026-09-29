@@ -107,6 +107,41 @@ const CHAPTERS = ['第一章', '第二章', '第三章', '第四章', '第五章
   await context.close()
 }
 
+// ---------- Favorites: persistence and navigation ----------
+{
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
+  const page = await newPage(context, 'favorites')
+  await page.locator('.cf-node').first().click()
+  await page.locator('.panel').waitFor({ timeout: 5000 })
+  const formulaName = await page.locator('.formula-name').first().textContent()
+  await page.locator('.formula-favorite').first().click()
+
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.locator('.cf-node').first().click()
+  await page.locator('.panel').waitFor({ timeout: 5000 })
+  const persisted = await page.locator('.formula-favorite').first().getAttribute('aria-pressed')
+  if (persisted !== 'true') report.errors.push('favorites: state was not restored after reload')
+
+  await page.locator('.view-btn', { hasText: '我的收藏' }).click()
+  await page.locator('.favorite-card').first().waitFor({ timeout: 5000 })
+  const cardCount = await page.locator('.favorite-card').count()
+  const cardName = await page.locator('.favorite-card-name').first().textContent()
+  if (cardCount !== 1 || cardName !== formulaName) {
+    report.errors.push(`favorites: unexpected card count/name count=${cardCount} name=${cardName}`)
+  }
+
+  await page.locator('.favorite-open').first().click()
+  await page.locator('.panel').waitFor({ timeout: 5000 })
+  const highlighted = await page.locator('.formula-item.is-target').count()
+  if (highlighted !== 1) report.errors.push('favorites: opening a favorite did not highlight its formula')
+
+  await page.locator('.view-btn', { hasText: '我的收藏' }).click()
+  await page.locator('.favorite-remove').first().click()
+  await page.locator('.favorites-empty').waitFor({ timeout: 5000 })
+  report.favorites = { formulaName, persisted: persisted === 'true', openedAndHighlighted: highlighted === 1 }
+  await context.close()
+}
+
 // ---------- Mobile ----------
 {
   const context = await browser.newContext({
